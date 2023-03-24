@@ -1,3 +1,7 @@
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+
 /*********
   Rui Santos
   Complete project details at https://randomnerdtutorials.com/esp8266-nodemcu-access-point-ap-web-server/
@@ -10,8 +14,8 @@
 
 // Import required libraries
 #include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <Hash.h>
+//#include <ESP8266WiFi.h>
+//#include <Hash.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
