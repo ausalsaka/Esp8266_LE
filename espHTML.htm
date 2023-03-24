@@ -14,7 +14,8 @@
     p { font-size: 3.0rem; }
     .units { font-size: 1.2rem; }
     .sens-labels{font-size: 1.5rem; vertical-align:middle; padding-bottom: 15px;}
-    .heGauge{
+    .HeGauge{
+      position: relative;
       float:left;
       background-color:#F3CA40;
       width: 25%;
@@ -26,11 +27,13 @@
       width: 25%;
     }
     .loxGauge{
+      position: relative;
       float: left;
       background-color: #F3CA40;
       width: 25%;
     }
     .engineGauge{
+      position: relative;
       float: left;
       background-color: #F3CA40;
       width: 25%;
@@ -54,7 +57,48 @@
       height: 20%;
       background:black;
       border-radius: 25%;
-      transform: translate(5000%, -260%) rotate(45deg);
+      left: 50%;      
+      top: 46.5%;      
+      transform: rotate(45deg);
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+      z-index: 5;
+    }
+    .HeNeedle{
+      position: absolute;
+      transform-origin: top;
+      width: 1%;
+      height: 20%;
+      background:black;
+      border-radius: 25%;
+      left: 50%;      
+      top: 46.5%;      
+      transform: rotate(45deg);
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+      z-index: 5;
+    }
+    .LoxNeedle{
+      position: absolute;
+      transform-origin: top;
+      width: 1%;
+      height: 20%;
+      background:black;
+      border-radius: 25%;
+      left: 50%;      
+      top: 46.5%;      
+      transform: rotate(45deg);
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+      z-index: 5;
+    }
+    .EngineNeedle{
+      position: absolute;
+      transform-origin: top;
+      width: 1%;
+      height: 20%;
+      background:black;
+      border-radius: 25%;
+      left: 50%;      
+      top: 46.5%;      
+      transform: rotate(45deg);
       transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
       z-index: 5;
     }
@@ -69,15 +113,16 @@
 <body>
 
   
-<div style="position: relative">
+<div style="position: relative; width: 1024px;margin: 0 auto;">
   <h2>Onboard Systems</h2>
-  <div class="heGauge">
+  <div class="HeGauge">
     <p>
       <span class="sens-labels">HE:</span> 
       <img src = "gauge.png" alt = "gauge" style = "width: 80%">
       <span id="helium">%P0%</span>
       <sup class="units">psi</sup>
     </p>
+    <div class="HeNeedle"></div>
   </div>
 
   <div class="EtOHGauge">
@@ -97,6 +142,7 @@
     <span id="Liquid-Oxygen">%P2%</span>
     <sup class="units">psi</sup>
   </p>
+  <div class="LoxNeedle"></div>
 </div>
 
 <div class="engineGauge">
@@ -106,6 +152,7 @@
     <span id="Engine">%P3%</span>
     <sup class="units">psi</sup>
   </p>
+  <div class="EngineNeedle"></div>
 </div>
 
 <div class="EtOHVent">
@@ -127,25 +174,29 @@
   var HE_MAX = 3000;
   var LOX_MAX = 600;
   var ETOH_MAX = 600;
+  var ENGINE_MAX = 1200;
 
-function drawNeedle(e, val){
-  const rect = e.getBoundingClientRect();
-  var x = rect.left + window.scrollX;
-  var y = rect.left + window.scrollY;
-  var ctx = e.getContext("2d");
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x+10, y+10);
-  ctx.stroke();  
-}
+  var HeAngle = 0;
+  var LoxAngle = 0;
+  var EtOHAngle = 0;
+  var EngineAngle = 0;
+
+
 
 setInterval(function ( ) {
+  //document.getElementById("HeNeedle").style.transform = 'rotate('+67+'deg)';
+
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("helium").innerHTML = this.responseText;
+      HeAngle = 
+      (parseFloat(response)/HE_MAX) * (Math.PI * (-6.0/4.0)) + (Math.PI *(7.0/4.0));
+      document.getElementById("HeNeedle").style.transform = 'rotate('+HeAngle+'deg)';
     }
+    
   };
+  
   xhttp.open("GET", "/p0", true);
   xhttp.send();
 }, 1000 ) ;
