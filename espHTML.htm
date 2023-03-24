@@ -7,6 +7,7 @@
      display: inline-block;
      margin: 0px auto;
      text-align: center;
+     align-items: center;
      background-color:#577590;;
     }
     h2 { font-size: 3.0rem; }
@@ -19,6 +20,7 @@
       width: 25%;
     }
     .EtOHGauge{
+      position: relative;
       float: left;
       background-color: #F3CA40;
       width: 25%;
@@ -37,11 +39,24 @@
       background-color: #F2A541;
       width: 50%;
       float: left;
+      z-index: 0;
     }
     .EtOHVent{
       background-color: #F2A541;
       width: 50%;
       float: left;
+      z-index: 0;
+    }
+    .EtOHNeedle{
+      position: absolute;
+      transform-origin: top;
+      width: 1%;
+      height: 20%;
+      background:black;
+      border-radius: 25%;
+      transform: translate(5000%, -260%) rotate(45deg);
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+      z-index: 5;
     }
     img {
       display: block;
@@ -68,10 +83,11 @@
   <div class="EtOHGauge">
     <p>
       <span class="sens-labels">Ethanol:</span>
-      <img src = "gauge.png" alt = "gauge" style = "width:80%">
-      <span id="methane">%P1%</span>
+      <img src = "gauge.png" alt = "gauge" style = "width:80%; z-index: -1;">
+      <span id="EtOH">%P1%</span>
       <sup class="units">psi</sup>
-    </p>
+      </p>
+      <div class="EtOHNeedle"></div>
   </div>
 
 <div class="loxGauge">
@@ -105,19 +121,24 @@
     <span id="Hall-Effect-Lox">%HE0%</span>
   </p>
 </div>
-
-
-
-
-
-
 </div>
-
 </body>
 <script>
-var HE_MAX = 3000;
-var LOX_MAX = 600;
-var ETOH_MAX = 600;
+  var HE_MAX = 3000;
+  var LOX_MAX = 600;
+  var ETOH_MAX = 600;
+
+function drawNeedle(e, val){
+  const rect = e.getBoundingClientRect();
+  var x = rect.left + window.scrollX;
+  var y = rect.left + window.scrollY;
+  var ctx = e.getContext("2d");
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x+10, y+10);
+  ctx.stroke();  
+}
+
 setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -131,12 +152,24 @@ setInterval(function ( ) {
 
 setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
-  var response = this.responseText
+  var response;
+  var element = document.getElementById("EtOH");
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("methane").innerHTML = response;
+      response = this.responseText
+      element.innerHTML = response;
+      //var x = element.getBoundingClientRect().left;
+      var ctx = element.getContext("2d");
+      ctx.beginPath();
+      ctx.moveTo(-100, -100);
+      ctx.lineTo(150, 150);
+      ctx.stroke();
+      //drawNeedle(element, 100)
+      
     }
+
   };
+  
   xhttp.open("GET", "/p1", true);
   xhttp.send();
 }, 1000 ) ;

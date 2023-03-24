@@ -48,6 +48,7 @@ const long interval = 5000;
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
+<html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -56,45 +57,117 @@ const char index_html[] PROGMEM = R"rawliteral(
      display: inline-block;
      margin: 0px auto;
      text-align: center;
+     background-color:#577590;;
     }
     h2 { font-size: 3.0rem; }
     p { font-size: 3.0rem; }
     .units { font-size: 1.2rem; }
     .sens-labels{font-size: 1.5rem; vertical-align:middle; padding-bottom: 15px;}
+    .heGauge{
+      float:left;
+      background-color:#F3CA40;
+      width: 25%;
+    }
+    .EtOHGauge{
+      float: left;
+      background-color: #F3CA40;
+      width: 25%;
+    }
+    .loxGauge{
+      float: left;
+      background-color: #F3CA40;
+      width: 25%;
+    }
+    .engineGauge{
+      float: left;
+      background-color: #F3CA40;
+      width: 25%;
+    }
+    .loxVent{
+      background-color: #F2A541;
+      width: 50%;
+      float: left;
+    }
+    .EtOHVent{
+      background-color: #F2A541;
+      width: 50%;
+      float: left;
+    }
+    img {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 25%;
+    }
   </style>
 </head>
 <body>
-  <h2>LE Onboard Systems</h2>
-  <p>
-    <span class="sens-labels">HE:</span> 
-    <span id="helium">%P0%</span>
-    <sup class="units">psi</sup>
-  </p>
-  <p>
-    <span class="sens-labels">CH4:</span>
-    <span id="methane">%P1%</span>
-    <sup class="units">psi</sup>
-  </p>
+
+  
+<div style="position: relative">
+  <h2>Onboard Systems</h2>
+  <div class="heGauge">
+    <p>
+      <span class="sens-labels">HE:</span> 
+      <img src = "gauge.png" alt = "gauge" style = "width: 80%">
+      <span id="helium">%P0%</span>
+      <sup class="units">psi</sup>
+    </p>
+  </div>
+
+  <div class="EtOHGauge">
+    <p>
+      <span class="sens-labels">Ethanol:</span>
+      <img src = "gauge.png" alt = "gauge" style = "width:80%">
+      <span id="methane">%P1%</span>
+      <sup class="units">psi</sup>
+    </p>
+  </div>
+
+<div class="loxGauge">
   <p>
     <span class="sens-labels">LOX:</span>
+    <img src = "gauge.png" alt = "gauge" style = "width:80%">
     <span id="Liquid-Oxygen">%P2%</span>
     <sup class="units">psi</sup>
   </p>
+</div>
+
+<div class="engineGauge">
   <p>
     <span class="sens-labels">Engine:</span>
+    <img src = "gauge.png" alt = "gauge" style = "width:80%">
     <span id="Engine">%P3%</span>
     <sup class="units">psi</sup>
   </p>
+</div>
+
+<div class="EtOHVent">
+  <p>
+    <span class="sens-labels">Ethanol Vent:</span>
+    <span id="Hall-Effect-CH4">%HE1%</span>
+  </p>
+</div>
+
+<div class="loxVent">
   <p>
     <span class="sens-labels">Lox Vent:</span>
     <span id="Hall-Effect-Lox">%HE0%</span>
   </p>
-  <p>
-    <span class="sens-labels">CH4 Vent:</span>
-    <span id="Hall-Effect-CH4">%HE1%</span>
-  </p>
+</div>
+
+
+
+
+
+
+</div>
+
 </body>
 <script>
+var HE_MAX = 3000;
+var LOX_MAX = 600;
+var ETOH_MAX = 600;
 setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -108,9 +181,10 @@ setInterval(function ( ) {
 
 setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
+  var response = this.responseText
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("methane").innerHTML = this.responseText;
+      document.getElementById("methane").innerHTML = response;
     }
   };
   xhttp.open("GET", "/p1", true);
@@ -143,7 +217,7 @@ setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("Hall-Effect-CH4").innerHTML = this.responseText;
+      document.getElementById("Hall-Effect-CH4").innerHTML = this.responseText;      
     }
   };
   xhttp.open("GET", "/he0", true);
